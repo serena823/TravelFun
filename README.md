@@ -5,6 +5,7 @@
 2. show map and markers in the profile
 3. change 'search' into 'search user' or 'search post(location, caption)'
 4. change database 'MySQL' to 'PostgreSQL'
+5. visit at https://35.183.67.139
 
 
 # Start env
