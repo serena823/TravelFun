@@ -1,0 +1,23 @@
+{% extends "photo_blog/base.html" %}
+{% block content %}
+
+<div class="content">
+  <center>
+    <h4>Direct Messages</h4>
+  </center>
+  <a href="{% url 'direct_messages-new' %}">New Message</a>
+  </br>
+  </br>
+  {% if object_list %}
+    {% for direct_message in object_list %}
+      <img class='rounded-circle article-img mt-1 crop' src="{{ direct_message.sender.profile.image.url }}" height="50" width="50">
+      <a class="black-link" href="{% url 'direct_messages-thread' direct_message.sender.username %}">{{ direct_message.sender }}</a>
+      </br>
+      </br>
+    {% endfor %}
+  {% else %}
+      You haven't received any messages yet
+  {% endif %}
+</div>
+
+{% endblock %}

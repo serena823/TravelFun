@@ -1,0 +1,72 @@
+{% extends "photo_blog/base.html" %}
+{% block content %}
+
+{% if object_list %}
+  <div class="content">
+    <div class="infinite-container">
+      {% for post in object_list %}
+        <article class="media content-section">
+          <div class="infinite-item">
+              <div class="media-body">
+                <div class="article-metadata">
+                  <div>
+                    <img class='rounded-circle article-img crop'src="{{ post.author.profile.image.url }}" height="50" width="50">
+                    <a class="black-link" href="{% url 'photo_blog-profile' post.author.username %}">{{ post.author }}</a>
+                    {% if post.location %}
+                      <small>{{ post.geolocation }}</small>
+                    {% endif %}
+                  </div>
+                  <img class="img-fluid img-thumbnail" src="{{ post.photo.url }}">
+                  {% if user in post.likes.all %}
+                    <a id=imageElement{{post.id}}  onclick="toggleLike({{post.id}})"><img src="/media/nav_buttons/liked.svg" height="17" width="17"></a>
+                  {% else %}
+                    <a id=imageElement{{post.id}}  onclick="toggleLike({{post.id}})"><img src="/media/nav_buttons/unliked.svg" height="17" width="17"></a>
+                  {% endif %}
+                  <a href="{% url 'photo_blog-comment' post.id %}"><img src="/media/nav_buttons/comment.svg" height="17" width="17"></a></br>
+                  {% if post.likes.count != 0 %}
+                    <a id=likeCount{{post.id}} class="black-link-plain mb-3" href="{% url 'photo_blog-post_likes' post.id %}">{{post.likes.count}} likes</a>
+                  {% endif %}
+                  <a id=likeCount{{post.id}} class="black-link-plain mb-3" href="{% url 'photo_blog-post_likes' post.id %}"></a>
+                  <p>
+                    <a class="black-link" href="{% url 'photo_blog-profile' post.author.username %}">{{ post.author }}</a>
+                    {{ post.caption|truncatechars:100 }}
+                  </p>
+                  {% if post.comments.all %}
+                    <p>
+                      <a class="black-link" href="{% url 'photo_blog-profile' post.comments.first.author.username %}">{{ post.comments.first.author }}</a>
+                      {{ post.comments.first|truncatechars:50 }}
+                    </p>
+                  {% endif %}
+                  <a href="{% url 'photo_blog-detail' post.id %}">View Post</a>
+                  <p><small>{{ post.date_posted|date:'F d, Y' }}</small></p>
+                </div>
+              </div>
+            </div>
+        </article>
+      {% endfor %}
+      <div>
+        {% if page_obj.has_next %}
+          <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% else %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="content">
+                    <h1>TravelFun</h1>
+                </div>
+             </div>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+  var infinite = new Waypoint.Infinite({
+    element: $('.infinite-container')[0]
+  });
+</script>
+
+{% endblock %}

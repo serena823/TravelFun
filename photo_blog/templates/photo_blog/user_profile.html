@@ -1,0 +1,101 @@
+{% extends "photo_blog/base.html" %}
+{% block content %}
+
+<script type="text/javascript">
+  window.USER_FOLLOW_URL = "{% url 'user_follow' view.kwargs.username %}";
+</script>
+<div class="content">
+  <div class="media-body">
+    {% for author in object_list %}
+      <center>
+        <img class="rounded-circle crop" width="150" height="150" src="{{ author.profile.image.url }}">
+        <h5>{{ view.kwargs.username }}</h5>
+        <a id=followCount class="black-link" href="{% url 'user_followers' view.kwargs.username %}">{{author.profile.followers.count}} Followers</a></br>
+        {% if author.profile.bio %}
+          {{ author.profile.bio }}</br>
+        {% endif %}
+        {% if author.profile.website %}
+          <a href="{{ author.profile.website }}">{{ author.profile.website }}</a></br>
+        {% endif %}
+        </br>
+        {% if view.kwargs.username == user.username %}
+          <a class='btn' href="{% url 'edit_profile' %}">Edit Profile</a>
+{#          <a class='btn' href="{% url 'logout' %}">Logout</a>#}
+        {% elif user in author.profile.followers.all %}
+          <button id="followElement" class="myButton" onclick="toggleFollow()">Unfollow</button>
+        {% elif user not in author.profile.followers.all %}
+          <button id="followElement" class="myButton" onclick="toggleFollow()">Follow</button>
+        {% endif %}
+          <p id="demo"></p>
+        <div id="mapholder"></div>
+      </center>
+    </div>
+    </br>
+    <center>
+      {% if author.posts.all %}
+        <script>var locat = [];</script>
+        {% for post in author.posts.all reversed %}
+        {% if post.location %}
+        <script>
+            locat.push([{{ post.lat }}, {{ post.lon }}]);
+
+        </script>
+        {% endif %}
+        <a href="{% url 'photo_blog-detail' post.id %}"><img class="crop" width="147" height="147" src="{{ post.photo.url }}"></a>
+        {% endfor %}
+      {% else %}
+        {% if view.kwargs.username == user.username %}
+            <center>
+                You haven't made any posts yet. When you do, your posts will show up here.
+            </center>
+        {% else %}
+            <center>
+                {{ view.kwargs.username }} hasn't made any posts yet. When they do, their posts will show up here.
+            </center>
+        {% endif %}
+      {% endif %}
+
+    </center>
+  {% endfor %}
+</div>
+
+<div class="content">
+    <!--<p id="demo"></p>-->
+    <!--<div id="mapholder"></div>-->
+    <script src="https://maps.google.com/maps/api/js?sensor=false"></script>
+    <script>
+
+
+    showPosition();
+
+
+    function showPosition()
+    {
+
+        mapholder=document.getElementById('mapholder')
+        mapholder.style.height='250px';
+        mapholder.style.width='500px';
+
+        var myOptions={
+            center: new google.maps.LatLng(43.4735, -80.5371),
+            zoom: 11,
+            mapTypeId:google.maps.MapTypeId.ROADMAP,
+            mapTypeControl:false,
+            navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+        };
+        var map=new google.maps.Map(document.getElementById("mapholder"),myOptions);
+
+
+        for (i = 0; i < locat.length; i++) {
+            var marker=new google.maps.Marker({
+                position: new google.maps.LatLng(locat[i][0], locat[i][1]),
+                map:map,
+                title: "You are here!"
+            });
+        };
+
+    }
+
+    </script>
+</div>
+{% endblock %}

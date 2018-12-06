@@ -1,0 +1,18 @@
+{% extends "photo_blog/base.html" %}
+{% load material_form %}
+{% block content %}
+
+<center>
+  <h4>New Comment</h4>
+</center>
+<div>
+  <form class='active' method="POST">
+      {% csrf_token %}
+      <fieldset>
+        {% form form=form %}{% endform %}
+        <button type="submit" name="_submit" class="myButton">Post</button>
+      </fieldset>
+  </form>
+</div>
+
+{% endblock %}

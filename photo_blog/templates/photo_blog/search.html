@@ -1,0 +1,85 @@
+{% extends "photo_blog/base.html" %}
+{% load material_form %}
+{% load photo_blog_tags %}
+{% block content %}
+
+    <body style="background-image: url(http://www.salsatraveladvisor.com/wp-content/uploads/2018/04/UK_RTW_CONTENT_310317_960X400-HERO.jpg);
+      background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;"
+      </body>
+
+    <form method="GET" action="">
+      <input type="text" placeholder="Search user or location " name="q" value="{{ request.GET.q }}">
+      <input class="btn" type="submit" name="searchuser" value="Search User">
+      <input class="btn" type="submit" name="searchlocation" value="Search Location">
+
+    </form>
+
+
+
+{% if request.GET.q %}
+    <!-- search user -->
+    {% if posts1 %}
+    {% for profile in posts1 %}
+      <img class='rounded-circle article-img mt-1' src="{{ profile.image.url }}" height="50" width="50">
+      <a class="black-link" href="{% url 'photo_blog-profile' profile.user.username %}">{{ profile.user }}</a>
+      </br>
+    {% endfor %}
+    {% endif %}
+
+    <!-- search post -->
+    {% if posts2 %}
+    {% for post in posts2 reversed %}
+      <article class="media content-section mt-5">
+        <div class="media-body">
+          <div class="article-metadata">
+            <div>
+              <img class='rounded-circle article-img crop'src="{{ post.author.profile.image.url }}" height="50" width="50">
+              <a class="black-link" href="{% url 'photo_blog-profile' post.author.username %}">{{ post.author }}</a>
+              {% if post.geolocation %}
+              <small>{{post.geolocation}}</small>
+              {% endif %}
+            </div>
+            <img class="img-fluid img-thumbnail" src="{{ post.photo.url }}">
+            {% if user in post.likes.all %}
+              <a id=imageElement{{post.id}}  onclick="toggleLike({{post.id}})"><img src="/media/nav_buttons/liked.svg" height="17" width="17"></a>
+            {% else %}
+              <a id=imageElement{{post.id}}  onclick="toggleLike({{post.id}})"><img src="/media/nav_buttons/unliked.svg" height="17" width="17"></a>
+            {% endif %}
+            <a href="{% url 'photo_blog-comment' post.id %}"><img src="/media/nav_buttons/comment.svg" height="17" width="17"></a></br>
+            {% if post.likes.count != 0 %}
+              <a id=likeCount{{post.id}} class="black-link-plain mb-3" href="{% url 'photo_blog-post_likes' post.id %}">{{post.likes.count}} likes</a>
+            {% endif %}
+            <a id=likeCount{{post.id}} class="black-link-plain mb-3" href="{% url 'photo_blog-post_likes' post.id %}"></a>
+            <p>
+              <a class="black-link" href="{% url 'photo_blog-profile' post.author.username %}">{{ post.author }}</a>
+              {{ post.caption }}
+            </p>
+            {% if post.comments.all %}
+              <p>
+                <a class="black-link" href="{% url 'photo_blog-profile' post.comments.first.author.username %}">{{ post.comments.first.author }}</a>
+                {{ post.comments.first|truncatechars:50 }}
+              </p>
+            {% endif %}
+            {% if post.comments.all %}
+              <a href="{% url 'photo_blog-detail' post.id %}">View Comments</a>
+            {% endif %}
+            <p><small>{{ post.date_posted|date:'F d, Y' }}</small></p>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+    {% endif %}
+
+    {% if not posts1 and not posts2 %}
+        <p>No Result</p>
+    {% endif %}
+
+
+{% endif %}
+
+
+{% endblock %}
+

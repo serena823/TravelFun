@@ -1,0 +1,103 @@
+{% extends "photo_blog/base.html" %}
+
+{% block content %}
+<div class="content mt-3">
+    {{ form.media }}
+    <center>
+        <h4>Post</h4>
+    </center>
+
+    <div>
+
+        <form class="active" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset>
+
+                <form>
+
+                    <div class="form-group">
+                        <p><label id="font1">Photo:</label> <input type="file"  name="photo" accept="image/*" required="" id="id_photo"></p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <p><label id="font2">Caption:</label> <textarea class="form-control" name="caption" cols="40" rows="10" maxlength="2200" id="id_caption"></textarea></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_location"></label> <input type = 'hidden' class="form-control" name="location" id="id_location">
+                    </div>
+
+                    <!--<p><label for="id_caption">Geolocation:</label> <textarea name="geolocation" cols="40" rows="10" maxlength="2200" id="id_caption"></textarea></p>-->
+                    <div class="form-group">
+                        <p id="id_message"><label id = "font2">Location:</label> <button onclick="getLocation()">Location Open!</button></p>
+                    </div>
+
+                    <div id="mapholder">
+
+                        <script src="https://maps.google.com/maps/api/js?sensor=false"></script>
+
+                    </div>
+                    <button type="submit" name="_submit" class="myButton">Post</button>
+
+                </form>
+
+            </fieldset>
+        </form>
+
+        <script>
+
+        var x = document.getElementById("id_location");
+        var y = document.getElementById("id_message");
+
+        function getLocation() {
+
+            if (navigator.geolocation) {
+                y.innerHTML = "<p>Locating…</p>";
+                navigator.geolocation.getCurrentPosition(showPosition,showError);
+            } else {
+                y.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+
+        function showPosition(position) {
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
+            y.innerHTML = "";
+            x.value = `SRID=4326;POINT(${position.coords.latitude} ${position.coords.longitude})`
+            latlon=new google.maps.LatLng(lat, lon)
+            mapholder=document.getElementById('mapholder')
+            mapholder.style.height='250px';
+            mapholder.style.width='500px';
+
+            var myOptions={
+                center:latlon,zoom:14,
+                mapTypeId:google.maps.MapTypeId.ROADMAP,
+                mapTypeControl:false,
+                navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+            };
+            var map=new google.maps.Map(document.getElementById("mapholder"),myOptions);
+            var marker=new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
+        }
+
+        function showError(error){
+            switch(error.code){
+                case error.PERMISSION_DENIED:
+                y.innerHTML="User denied the request for Geolocation."
+                break;
+                case error.POSITION_UNAVAILABLE:
+                y.innerHTML="Location information is unavailable."
+                break;
+                case error.TIMEOUT:
+                y.innerHTML="The request to get user location timed out."
+                break;
+                case error.UNKNOWN_ERROR:
+                y.innerHTML="An unknown error occurred."
+                break;
+            }
+        }
+        </script>
+    </div>
+</div>
+{% endblock %}
