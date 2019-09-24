@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from users.models import Profile
 from django.urls import reverse
-from django.contrib.gis.db import models as model_geo
+from django.contrib.gis.db import models as model_geo # GeoDjango library PostGis database
 from django.conf import settings
 
 
@@ -19,6 +19,7 @@ class Post(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     location = model_geo.PointField(srid=4326, null=True, blank=True, spatial_index=True, geography=True)
+    # PointField a GeoDjango-specific geometric field for storing a GEOS Point object that represents a pair of longitude and latitude coordinates.
     geolocation = models.TextField(max_length=2200, null=True, blank=True)
     lat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     lon = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)

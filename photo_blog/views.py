@@ -6,6 +6,7 @@ from django.views.generic import (
     ListView, DetailView,
     CreateView, UpdateView, DeleteView
     )
+# ListView class that you can use to display
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from rest_framework.views import APIView
 from rest_framework.response import Response
